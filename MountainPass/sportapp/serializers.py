@@ -15,15 +15,58 @@ class CoordsSerializer(serializers.ModelSerializer):
 
 
 class ImageSerializer(serializers.ModelSerializer):
+    data = serializers.CharField()
+
     class Meta:
         model = Image
-        fields = '__all__'
+        fields = ('data', 'title')
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+
+class PerevalUpdateSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    images = ImageSerializer()
+    coords = CoordsSerializer()
+
+    class Meta:
+        model = PerevalAdded
+        exclude = ('author',)
+
+    def update(self, instance, validated_data):
+        if instance.status != 'new':
+            raise serializers.ValidationError("Редактирование разрешено только для записей со статусом 'new'.")
+
+        # Обновление полей модели PerevalAdded
+        instance.beauty_title = validated_data.get('beauty_title', instance.beauty_title)
+        instance.title = validated_data.get('title', instance.title)
+        instance.other_titles = validated_data.get('other_titles', instance.other_titles)
+        instance.area = validated_data.get('area', instance.area)
+        instance.type_activity = validated_data.get('type_activity', instance.type_activity)
+        instance.connect = validated_data.get('connect', instance.connect)
+        instance.status = validated_data.get('status', instance.status)
+
+        # Обновление связанных объектов (вложенных сериализаторов)
+        category_data = validated_data.pop('category')
+        images_data = validated_data.pop('images')
+        coords_data = validated_data.pop('coords')
+
+        coords, created = Coords.objects.get_or_create(**coords_data)
+        category, created = Category.objects.get_or_create(**category_data)
+        images, created = Image.objects.get_or_create(**images_data)
+
+        # Обновление связей с вложенными объектами
+        instance.coords = coords
+        instance.category = category
+        instance.images = images
+
+        instance.save()
+
+        return instance
 
 
 class PerevalAddedSerializer(serializers.ModelSerializer):
@@ -50,3 +93,4 @@ class PerevalAddedSerializer(serializers.ModelSerializer):
         pereval_added = PerevalAdded.objects.create\
             (author=author, coords=coords, images=images, category=category, **validated_data)
         return pereval_added
+

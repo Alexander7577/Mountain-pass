@@ -23,7 +23,7 @@ class Coords(models.Model):
 
 
 class Image(models.Model):
-    data = models.ImageField(upload_to='media/')
+    data = models.ImageField(upload_to='')
     title = models.CharField(max_length=100)
 
     def __str__(self):
