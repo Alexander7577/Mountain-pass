@@ -14,23 +14,23 @@ class SubmitData(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = PerevalAddedSerializer(data=request.data)
-        instance = self.get_object()
         if serializer.is_valid():
-            serializer.save()
-            updated_instance = PerevalAdded.objects.get(pk=instance.pk)
+            instance = serializer.save()
+            serialized_data = PerevalAddedSerializer(instance).data  # Получаем данные о созданном объекте
             return Response(
                 {
                     'state': '1',
                     'message': 'Объект успешно создан',
-                    'data': PerevalAddedSerializer(updated_instance).data
+                    'data': serialized_data  # Включаем данные объекта в ответ
                 }
             )
         return Response(
             {
-                'state': '2',
+                'state': '0',
                 'message': 'Не удалось создать объект',
-                'data': serializer.errors
-            }
+                'errors': serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     def update(self, request, *args, **kwargs):
