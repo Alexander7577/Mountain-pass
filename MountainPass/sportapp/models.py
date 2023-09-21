@@ -49,7 +49,7 @@ class PerevalAdded(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     coords = models.OneToOneField(Coords, on_delete=models.CASCADE)
     area = models.CharField(choices=PEREVALAREAS, max_length=50)
-    type_activity = models.CharField(choices=TYPEACTIVITY)
+    type_activity = models.CharField(choices=TYPEACTIVITY, max_length=100)
     connect = models.CharField(max_length=250)
     images = models.ForeignKey(Image, on_delete=models.CASCADE)
     status = models.CharField(choices=STATUSES, max_length=30, default='new')
