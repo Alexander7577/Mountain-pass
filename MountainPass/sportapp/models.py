@@ -53,3 +53,4 @@ class PerevalAdded(models.Model):
     connect = models.CharField(max_length=250)
     images = models.ForeignKey(Image, on_delete=models.CASCADE)
     status = models.CharField(choices=STATUSES, max_length=30, default='new')
+

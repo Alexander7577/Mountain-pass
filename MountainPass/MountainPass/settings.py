@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,14 +88,13 @@ WSGI_APPLICATION = 'MountainPass.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '220022',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('FSTR_DB_NAME'),
+        'USER': config('FSTR_DB_USER'),
+        'PASSWORD': config('FSTR_DB_PASSWORD'),
+        'HOST': config('FSTR_DB_HOST'),
+        'PORT': config('FSTR_DB_PORT'),
     },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
